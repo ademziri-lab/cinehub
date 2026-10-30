@@ -10,6 +10,7 @@ const MovieSchema = new Schema({
   duration: { type: Number, required: true },
   averageRating: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now },
+  owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
 })
 
 export const Movie = models.Movie || mongoose.model('Movie', MovieSchema)

@@ -15,7 +15,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-            <body className="flex min-h-screen flex-col bg-gray-50 text-gray-900">
+            <body className="flex min-h-screen flex-col bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
         <Providers>
           <Header />
 

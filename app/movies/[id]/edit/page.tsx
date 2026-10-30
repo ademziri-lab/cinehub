@@ -3,6 +3,7 @@ import { connectDB } from '@/lib/db'
 import { Movie } from '@/models/Movie'
 import { updateMovie } from '@/app/actions/movie'
 import SubmitButton from '@/components/SubmitButton'
+import { getCurrentUser } from '@/lib/currentUser'
 
 export default async function EditMoviePage({
   params,
@@ -20,6 +21,16 @@ export default async function EditMoviePage({
 
   if (!movie) {
     return <p>Film introuvable.</p>
+  }
+
+    const user = await getCurrentUser()
+
+  if (!user) {
+    return <p>Vous devez être connecté pour modifier un film.</p>
+  }
+
+  if (movie.owner?.toString() !== user._id.toString()) {
+    return <p>Vous ne pouvez modifier que vos propres films.</p>
   }
 
   const inputClass = 'w-full rounded-xl border p-3'

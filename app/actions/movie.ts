@@ -3,6 +3,7 @@
 import { redirect } from 'next/navigation'
 import { connectDB } from '@/lib/db'
 import { Movie } from '@/models/Movie'
+import { getCurrentUser } from '@/lib/currentUser'
 
 export async function createMovie(formData: FormData) {
   await connectDB()
@@ -19,7 +20,16 @@ export async function createMovie(formData: FormData) {
     throw new Error('Tous les champs sont requis')
   }
 
-  await Movie.create({ title, poster, description, genre, releaseYear, director, duration })
+    const user = await getCurrentUser()
+
+  if (!user) {
+    throw new Error('Vous devez être connecté pour ajouter un film')
+  }
+
+
+    await Movie.create({ title, poster, description, genre, releaseYear, director, duration, owner: user._id })
+
+  
 
   console.log('Nouveau film ajouté :', title)
 
@@ -27,6 +37,12 @@ export async function createMovie(formData: FormData) {
 }
 
 export async function updateMovie(formData: FormData) {
+  const user = await getCurrentUser()
+
+  if (!user) {
+    throw new Error('Vous devez être connecté')
+  }
+
   await connectDB()
 
   const id = formData.get('id')?.toString()
@@ -41,6 +57,16 @@ export async function updateMovie(formData: FormData) {
     throw new Error('Tous les champs sont requis')
   }
 
+  const movie = await Movie.findById(id)
+
+  if (!movie) {
+    throw new Error('Film introuvable')
+  }
+
+  if (movie.owner.toString() !== user._id.toString()) {
+    throw new Error('Vous ne pouvez modifier que vos propres films')
+  }
+
   const poster = `https://placehold.co/300x450?text=${encodeURIComponent(title)}`
 
   await Movie.findByIdAndUpdate(id, { title, poster, description, genre, releaseYear, director, duration })
@@ -51,7 +77,23 @@ export async function updateMovie(formData: FormData) {
 }
 
 export async function deleteMovie(id: string) {
+  const user = await getCurrentUser()
+
+  if (!user) {
+    throw new Error('Vous devez être connecté')
+  }
+
   await connectDB()
+
+  const movie = await Movie.findById(id)
+
+  if (!movie) {
+    throw new Error('Film introuvable')
+  }
+
+  if (movie.owner.toString() !== user._id.toString()) {
+    throw new Error('Vous ne pouvez supprimer que vos propres films')
+  }
 
   await Movie.findByIdAndDelete(id)
 

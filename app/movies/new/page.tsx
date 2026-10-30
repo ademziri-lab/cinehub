@@ -1,7 +1,13 @@
 import { createMovie } from '@/app/actions/movie'
 import SubmitButton from '@/components/SubmitButton'
+import { getCurrentUser } from '@/lib/currentUser'
 
-export default function NewMoviePage() {
+export default async function NewMoviePage() {
+    const user = await getCurrentUser()
+
+  if (!user) {
+    return <p>Vous devez être connecté pour ajouter un film.</p>
+  }
   const inputClass = 'w-full rounded-xl border p-3'
 
   return (

@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { connectDB } from '@/lib/db'
 import { Movie } from '@/models/Movie'
 import MovieActions from '@/components/MovieActions'
+import { getCurrentUser } from '@/lib/currentUser'
 
 export default async function MovieDetail({
   params,
@@ -20,6 +21,8 @@ export default async function MovieDetail({
   if (!movie) {
     return <p>Film introuvable.</p>
   }
+    const user = await getCurrentUser()
+  const isOwner = user && movie.owner?.toString() === user._id.toString()
 
   return (
     <div className="flex flex-col gap-4 md:flex-row">
@@ -36,7 +39,7 @@ export default async function MovieDetail({
         </p>
         <p className="mt-1">Réalisateur : {movie.director}</p>
         <p className="mt-1">⭐ {movie.averageRating}</p>
-        <MovieActions id={id} />
+        {isOwner && <MovieActions id={id} />}
         <p className="mt-4">{movie.description}</p>
       </div>
     </div>
