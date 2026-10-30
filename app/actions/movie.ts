@@ -4,6 +4,8 @@ import { redirect } from 'next/navigation'
 import { connectDB } from '@/lib/db'
 import { Movie } from '@/models/Movie'
 import { getCurrentUser } from '@/lib/currentUser'
+import { Review } from '@/models/Review'
+import { User } from '@/models/User'
 
 export async function createMovie(formData: FormData) {
   await connectDB()
@@ -96,6 +98,8 @@ export async function deleteMovie(id: string) {
   }
 
   await Movie.findByIdAndDelete(id)
+    await Review.deleteMany({ movie: id })
+      await User.updateMany({}, { $pull: { favorites: id } })
 
   console.log('Film supprimé :', id)
 
