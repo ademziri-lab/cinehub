@@ -23,6 +23,7 @@ export default function Header() {
             <li><button onClick={() => router.push('/')} className={linkClass}>Catalogue</button></li>
             <li><button onClick={() => router.push('/movies/new')} className={linkClass}>Ajouter</button></li>
             <li><button onClick={() => router.push('/favorites')} className={linkClass}>Favoris</button></li>
+            <li><button onClick={() => router.push('/assistant')} className={linkClass}>Assistant IA</button></li>
             <li><button onClick={() => router.push('/profile')} className={linkClass}>Profil</button></li>
             <li className="font-bold">Bonjour, {session.user?.name}</li>
             <li>
